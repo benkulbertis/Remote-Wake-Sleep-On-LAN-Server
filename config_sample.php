@@ -21,21 +21,15 @@
 	//This is the Name of the computers to appear in the drop down
 	$COMPUTER_NAME = array("computer1","computer2");
 	
+    //This is the Username of the user to that will run the sleep command.
+    $COMPUTER_USER = array('user1', 'user2');
+	
 	//This is the MAC address of the Network Interface on the computer you are trying to wake.
 	$COMPUTER_MAC = array("00:00:00:00:00:00:00","00:00:00:00:00:00:00");
 	
 	//This is the LOCAL IP address of the computer you are trying to wake.  Use a reserved DHCP through your router's administration interface to ensure it doesn't change.
 	$COMPUTER_LOCAL_IP = array("192.168.0.1","192.168.0.2");
 
-	
-	//This is the Port being used by the Windows SleepOnLan Utility to initiate a Sleep State
-	//http://www.ireksoftware.com/SleepOnLan/
-	$COMPUTER_SLEEP_CMD_PORT = 7760;
-	//Command to be issued by the windows sleeponlan utility 
-	//options are suspend, hibernate, logoff, poweroff, forcepoweroff, lock, reboot
-	//You can create a windows scheduled task that starts sleeponlan.exe on boot with following startup parameters /auto /port=7760
-	$COMPUTER_SLEEP_CMD = "suspend";
-	
 	//This is the location of the bootstrap style folder relative to your index and config file. Default = "" (Same folder as this file)
 	//Directory must be called "bootstrap". You may wish to move if this WOL script is the "child" of a larger web project on your Pi, that will also use bootstrap styling.
 	//If if it on directory up, for example, you would set this to "../"

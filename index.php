@@ -28,7 +28,7 @@ ob_end_flush();
     <title>Remote Wake/Sleep-On-LAN</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A utility for remotely waking/sleeping a Windows computer via a Raspberry Pi">
+    <meta name="description" content="A utility for remotely waking/sleeping a *nix computer via a Raspberry Pi">
     <meta name="author" content="Jeremy Blum">
 
     <!-- Le styles -->
@@ -196,46 +196,36 @@ ob_end_flush();
 				elseif ($approved_sleep)
 				{
 					echo "<p>Approved. Sending Sleep Command...</p>";
-					$ch = curl_init();
-					curl_setopt($ch, CURLOPT_URL, "http://" . $COMPUTER_LOCAL_IP[$selectedComputer] . ":" . $COMPUTER_SLEEP_CMD_PORT . "/" .  $COMPUTER_SLEEP_CMD);
-					curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-					
-					if (curl_exec($ch) === false)
-					{
-						echo "<p><span style='color:#CC0000;'><b>Command Failed:</b></span> " . curl_error($ch) . "</p>";
-					}
-					else
-					{
-						echo "<p><span style='color:#00CC00;'><b>Command Succeeded!</b></span> Waiting for " . $COMPUTER_NAME[$selectedComputer] . " to go to sleep...</p><p>";
-						$count = 1;
-						$down = false;
-						while ($count <= $MAX_PINGS && $down == false)
-						{
-							echo "Ping " . $count . "...";
-							$pinginfo = exec("ping -c 1 " . $COMPUTER_LOCAL_IP[$selectedComputer]);
-							$count++;
-							if ($pinginfo == "")
-							{
-								$down = true;
-								echo "<span style='color:#00CC00;'><b>It's Asleep!</b></span><br />";
-								echo "<p><a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a></p>";
-								$show_form = false;
-								
-							}
-							else
-							{
-								echo "<span style='color:#CC0000;'><b>Still Awake.</b></span><br />";
-							}
-							sleep($SLEEP_TIME);
-						}
-						echo "</p>";
-						if ($down == false)
-						{
-							echo "<p style='color:#CC0000;'><b>FAILED!</b> " . $COMPUTER_NAME[$selectedComputer] . " doesn't seem to be falling asleep... Try again?</p><p>(Or <a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a>.)</p>";
-						}
-					}
-					curl_close($ch);
+					$output = exec("ssh ".$COMPUTER_USER[$selectedComputer]."@".$COMPUTER_LOCAL_IP[$selectedComputer]." 'echo ".$_POST['password']." | sudo -S shutdown -P now' 2>&1");
+                    if(strpos($output, "[sudo]") !== false){
+                        echo "<p><span style='color:#00CC00;'><b>Command Succeeded!</b></span> Waiting for " . $COMPUTER_NAME[$selectedComputer] . " to go to sleep...</p><p>";
+                        $count = 1;
+                        $down = false;
+                        while ($count <= $MAX_PINGS && $down == false)
+                        {
+                            echo "Ping " . $count . "...";
+                            $pinginfo = exec("ping -c 1 " . $COMPUTER_LOCAL_IP[$selectedComputer]);
+                            $count++;
+                            if ($pinginfo == "")
+                            {
+                                $down = true;
+                                echo "<span style='color:#00CC00;'><b>It's Asleep!</b></span><br />";
+                                echo "<p><a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a></p>";
+                                $show_form = false;
+
+                            }
+                            else
+                            {
+                                echo "<span style='color:#CC0000;'><b>Still Awake.</b></span><br />";
+                            }
+                            sleep($SLEEP_TIME);
+                        }
+                        echo "</p>";
+                        if ($down == false)
+                        {
+                            echo "<p style='color:#CC0000;'><b>FAILED!</b> " . $COMPUTER_NAME[$selectedComputer] . " doesn't seem to be falling asleep... Try again?</p><p>(Or <a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a>.)</p>";
+                        }
+                    }
 				}
 				elseif (isset($_POST['submitbutton']))
 				{
