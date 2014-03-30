@@ -197,35 +197,35 @@ ob_end_flush();
 				{
 					echo "<p>Approved. Sending Sleep Command...</p>";
 					$output = exec("ssh ".$COMPUTER_USER[$selectedComputer]."@".$COMPUTER_LOCAL_IP[$selectedComputer]." 'echo ".$_POST['password']." | sudo -S shutdown -P now' 2>&1");
-                    if(strpos($output, "[sudo]") !== false){
-                        echo "<p><span style='color:#00CC00;'><b>Command Succeeded!</b></span> Waiting for " . $COMPUTER_NAME[$selectedComputer] . " to go to sleep...</p><p>";
-                        $count = 1;
-                        $down = false;
-                        while ($count <= $MAX_PINGS && $down == false)
-                        {
-                            echo "Ping " . $count . "...";
-                            $pinginfo = exec("ping -c 1 " . $COMPUTER_LOCAL_IP[$selectedComputer]);
-                            $count++;
-                            if ($pinginfo == "")
-                            {
-                                $down = true;
-                                echo "<span style='color:#00CC00;'><b>It's Asleep!</b></span><br />";
-                                echo "<p><a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a></p>";
-                                $show_form = false;
-
-                            }
-                            else
-                            {
-                                echo "<span style='color:#CC0000;'><b>Still Awake.</b></span><br />";
-                            }
-                            sleep($SLEEP_TIME);
-                        }
-                        echo "</p>";
-                        if ($down == false)
-                        {
-                            echo "<p style='color:#CC0000;'><b>FAILED!</b> " . $COMPUTER_NAME[$selectedComputer] . " doesn't seem to be falling asleep... Try again?</p><p>(Or <a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a>.)</p>";
-                        }
-                    }
+					if(strpos($output, "[sudo]") !== false){
+						echo "<p><span style='color:#00CC00;'><b>Command Succeeded!</b></span> Waiting for " . $COMPUTER_NAME[$selectedComputer] . " to go to sleep...</p><p>";
+						$count = 1;
+						$down = false;
+						while ($count <= $MAX_PINGS && $down == false)
+						{
+						    echo "Ping " . $count . "...";
+						    $pinginfo = exec("ping -c 1 " . $COMPUTER_LOCAL_IP[$selectedComputer]);
+						    $count++;
+						    if ($pinginfo == "")
+						    {
+						        $down = true;
+						        echo "<span style='color:#00CC00;'><b>It's Asleep!</b></span><br />";
+						        echo "<p><a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a></p>";
+						        $show_form = false;
+						
+						    }
+						    else
+						    {
+						        echo "<span style='color:#CC0000;'><b>Still Awake.</b></span><br />";
+						    }
+						    sleep($SLEEP_TIME);
+						}
+						echo "</p>";
+						if ($down == false)
+						{
+						    echo "<p style='color:#CC0000;'><b>FAILED!</b> " . $COMPUTER_NAME[$selectedComputer] . " doesn't seem to be falling asleep... Try again?</p><p>(Or <a href='?computer=" . $selectedComputer . "'>Return to the Wake/Sleep Control Home</a>.)</p>";
+						}
+					}
 				}
 				elseif (isset($_POST['submitbutton']))
 				{
